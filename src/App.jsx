@@ -7,6 +7,8 @@ const statusStyles = {
   Archived: "bg-rose-100 text-rose-700 border-rose-200",
 };
 
+const ADMIN_EMAIL = "poole00000@gmail.com";
+
 function Badge({ children, tone = "default" }) {
   const tones = {
     default: "bg-slate-100 text-slate-700",
@@ -101,19 +103,6 @@ function LoginScreen({ onSubmit, loading, error }) {
             Employees sign in to view published opspecs. Only users with the admin role can create,
             edit, archive, and publish documents.
           </p>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {[
-              ["Viewer access", "Read-only access to published opspecs"],
-              ["Admin access", "Create and manage specs behind role-based auth"],
-              ["Backend rules", "Permissions are enforced by Supabase policies"],
-            ].map(([title, text]) => (
-              <div key={title} className="rounded-3xl border border-white/10 bg-white/5 p-5">
-                <p className="text-sm font-semibold text-white">{title}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{text}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="rounded-[2rem] border border-white/10 bg-white p-6 text-slate-900 shadow-2xl shadow-black/30 md:p-8">
@@ -425,8 +414,8 @@ function AdminDashboard({
 
           <Panel title="Security" subtitle="Production guidance">
             <div className="space-y-2 text-sm leading-6 text-slate-600">
-              <p>• Admin access should come from a role in the profiles table.</p>
-              <p>• Viewer access should only allow reading published specs.</p>
+              <p>• Admin access is currently forced for your email.</p>
+              <p>• Viewer access only shows published specs.</p>
               <p>• Never trust a hidden route as the primary protection.</p>
               <p>• Never expose the Supabase service role key in the frontend.</p>
             </div>
@@ -584,6 +573,11 @@ export default function OpspecsPortal() {
   }, []);
 
   async function loadRole(client, userEmail) {
+    if (userEmail && userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+      setRole("admin");
+      return;
+    }
+
     const { data, error } = await client
       .from("profiles")
       .select("role")
