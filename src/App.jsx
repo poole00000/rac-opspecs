@@ -437,7 +437,7 @@ export default function OpspecsPortal() {
         setSession(activeSession);
 
         if (activeSession?.user) {
-          await loadRole(client, activeSession.user.id);
+          await loadRole(client, activeSession.user.email);
           await loadSpecs(client);
         }
 
@@ -447,7 +447,7 @@ export default function OpspecsPortal() {
           setAuthError("");
 
           if (newSession?.user) {
-            await loadRole(client, newSession.user.id);
+            await loadRole(client, newSession.user.email);
             await loadSpecs(client);
           } else {
             setRole(null);
@@ -471,10 +471,16 @@ export default function OpspecsPortal() {
     };
   }, []);
 
-  async function loadRole(client, userId) {
-    const { data, error } = await client.from("profiles").select("role").eq("id", userId).single();
-    if (!error) setRole(data.role);
-    else setRole("viewer");
+  async function loadRole(client, email) {
+  const { data, error } = await client
+    .from("profiles")
+    .select("role")
+    .eq("email", email)
+    .single();
+
+  if (!error && data?.role) setRole(data.role);
+  else setRole("viewer");
+}
   }
 
   async function loadSpecs(client = supabase) {
