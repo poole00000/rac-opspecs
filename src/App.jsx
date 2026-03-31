@@ -1,4 +1,4 @@
-import react { useEffect, useMemo, useState } from "react";
+import react, { useEffect, useMemo, useState } from "react";
 
 const statusStyles = {
   Active: "bg-emerald-100 text-emerald-700 border-emerald-200",
